@@ -1,49 +1,15 @@
 const { DB } = require("../sql")
 const { validationResult } = require("express-validator")
 
-// module.exports.createTask = (req, res) => {
-
-//     const errorResponse = validationResult(req)
-
-//     if (!errorResponse.isEmpty()) {
-//         return res.status(400).json({
-//             message: errorResponse.array()[0].msg 
-//         })
-//     }
-
-//     const { title, description, due_date, priority, category } = req.body
-//     const user_id = req.user.id 
-
-//     try {
-//         DB.query(
-//             "INSERT INTO tasks (title, description, due_date, priority, category, user_id) VALUES (?,?,?,?,?,?)",
-//             [title, description, due_date, priority, category, user_id],
-//             (er, result) => {
-//                 if (er) {
-//                     return res.status(500).json({ message: "Error creating task" })
-//                 }
-//                 return res.status(201).json({
-//                     message: "Task created successfully",
-//                     taskId: result.insertId
-//                 })
-//             }
-//         )
-//     } catch (error) {
-//         console.error("Unexpected error:", error)
-//         res.status(500).json({ message: error.message || "Something went wrong" })
-//     }
-// }
 
 
 
 
 module.exports.createTask = async (req, res) => {
-  console.log("📥 Raw body received:", req.body);
 
   const errorResponse = validationResult(req)
 
   if (!errorResponse.isEmpty()) {
-    console.log("❌ Validation errors:", errorResponse.array());
     return res.status(400).json({
       message: errorResponse.array()[0].msg
     })
