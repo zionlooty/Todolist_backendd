@@ -4,59 +4,6 @@ require("dotenv").config()
 const bcrypt = require("bcryptjs")
 const { validationResult } = require("express-validator")
 
-// module.exports.createUser = (req, res) => {
-//     const { fullname, email, password } = req.body
-//     const errorResponse = validationResult(req)
-
-//     try {
-
-//         if (!validationResult(req).isEmpty()) {
-//             return res.status(400).json({
-//                 message: errorResponse.array()[0].msg
-//             })
-//         }
-
-
-//         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-//         if (!emailRegex.test(email)) {
-//             return res.status(400).json({ message: "Invalid email format" })
-//         }
-
-
-//         DB.query("SELECT * FROM users WHERE email = ?", [email], (er, user) => {
-//             if (er) {
-//                 return res.status(500).json({ message: "Error fetching data" })
-//             }
-
-//             if (user.length > 0) {
-//                 return res.status(400).json({ message: "Email already exists" })
-//             } else {
-
-//                 const encryptedPassword = bcrypt.hashSync(password, 10)
-//                 DB.query(
-//                     "INSERT INTO users (full_name, email, pass_word) VALUES (?,?,?)",
-//                     [fullname, email, encryptedPassword],
-//                     (e, result) => {
-//                         if (e) {
-//                             console.log(e)
-//                             return res.status(500).json({ message: "Unable to create new user" })
-//                         }
-//                         const token = jwt.sign(
-//                             { id: result.insertId, email },
-//                             process.env.JWT_SECRET,
-//                             { expiresIn: "1h" }
-//                         )
-
-//                         return res.status(200).json({ message: "Account created successfully", token })
-//                     }
-//                 )
-//             }
-//         })
-//     } catch (error) {
-//         return res.status(500).json({ message: error.message || "Something went wrong" })
-//     }
-// }
-
 
 
 

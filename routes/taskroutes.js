@@ -11,7 +11,6 @@ taskRouter.post(
   verifyUser,
   [
     body("title").trim().notEmpty().withMessage("Title is required").bail(),
-    // Accept either due_date or dueDate from clients; normalize to due_date
     body("due_date")
       .customSanitizer((value, { req }) => {
         if (value) return value;

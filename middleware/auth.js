@@ -12,7 +12,7 @@ module.exports.verifyUser = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // ✅ attach the decoded user info (id, email, etc.)
+    req.user = decoded; 
     next();
   } catch (err) {
     console.error("❌ Token verification failed:", err);

@@ -1,49 +1,13 @@
 const { DB } = require("../sql")
 const { validationResult } = require("express-validator")
 
-// module.exports.createTask = (req, res) => {
-
-//     const errorResponse = validationResult(req)
-
-//     if (!errorResponse.isEmpty()) {
-//         return res.status(400).json({
-//             message: errorResponse.array()[0].msg 
-//         })
-//     }
-
-//     const { title, description, due_date, priority, category } = req.body
-//     const user_id = req.user.id 
-
-//     try {
-//         DB.query(
-//             "INSERT INTO tasks (title, description, due_date, priority, category, user_id) VALUES (?,?,?,?,?,?)",
-//             [title, description, due_date, priority, category, user_id],
-//             (er, result) => {
-//                 if (er) {
-//                     return res.status(500).json({ message: "Error creating task" })
-//                 }
-//                 return res.status(201).json({
-//                     message: "Task created successfully",
-//                     taskId: result.insertId
-//                 })
-//             }
-//         )
-//     } catch (error) {
-//         console.error("Unexpected error:", error)
-//         res.status(500).json({ message: error.message || "Something went wrong" })
-//     }
-// }
-
-
 
 
 module.exports.createTask = async (req, res) => {
-  console.log("📥 Raw body received:", req.body);
 
   const errorResponse = validationResult(req)
 
   if (!errorResponse.isEmpty()) {
-    console.log("❌ Validation errors:", errorResponse.array());
     return res.status(400).json({
       message: errorResponse.array()[0].msg
     })
@@ -79,13 +43,10 @@ module.exports.updateTask = (req, res) => {
   const task_id = req.params.id
 
   try {
-    // ✅ Step 1: validate input
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array()[0].msg })
     }
-
-    // ✅ Step 2: run SQL update
     DB.query(
       `UPDATE tasks 
              SET title=?, description=?, due_date=?, priority=?, category=?, status=? 
@@ -97,13 +58,10 @@ module.exports.updateTask = (req, res) => {
           return res.status(500).json({ message: "Error updating task" })
         }
 
-        // ✅ Step 3: check if any row was updated
         if (result.affectedRows === 0) {
           console.log(first)
           return res.status(404).json({ message: "Task not found or not yours" })
         }
-
-        // ✅ Step 4: success response
         return res.status(200).json({ message: "Task updated successfully" })
       }
     )
@@ -143,8 +101,8 @@ module.exports.getTasks = (req, res) => {
 
 
 module.exports.getTaskById = (req, res) => {
-  const user_id = req.user.id        // logged-in user
-  const task_id = req.params.id      // task id from URL
+  const user_id = req.user.id       
+  const task_id = req.params.id      
 
   try {
     DB.query(
@@ -173,8 +131,8 @@ module.exports.getTaskById = (req, res) => {
 
 
 module.exports.deleteTask = (req, res) => {
-  const user_id = req.user.id       // logged-in user
-  const task_id = req.params.id     // task id from URL
+  const user_id = req.user.id    
+  const task_id = req.params.id    
 
   try {
     DB.query(
