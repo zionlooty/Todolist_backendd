@@ -5,24 +5,27 @@ const taskRouter = require("./routes/taskroutes");
 
 const app = express();
 
+// ✅ CORS setup — allow only your deployed frontend
+app.use(
+  cors({
+    origin: "https://todolist-frontend.vercel.app", // your React frontend URL
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
-
-
+// ✅ Middleware setup
 app.use(express.json());
-
-
 app.use(express.urlencoded({ extended: true }));
 
+// ✅ Base route
 app.get("/", (req, res) => {
-  res.send("Backend is Running...");
+  res.send("✅ TodoList Backend running successfully on Vercel!");
 });
 
+// ✅ API routes
 app.use("/", userRouter);
 app.use("/task", taskRouter);
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// ❌ No app.listen() — Vercel handles this
+module.exports = app;
