@@ -5,25 +5,28 @@ const taskRouter = require("./routes/taskroutes");
 
 const app = express();
 
-// ✅ CORS setup — allow only your deployed frontend
+// ✅ Use CORS before everything else
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // for local testing
-      "https://todolist-frontend-orcin.vercel.app", // main production frontend
-      "https://todolist-frontend-git-main-yusuf-sodiqs-projects.vercel.app", // preview deploy
+      "http://localhost:5173", // local dev
+      "https://todolist-frontend-orcin.vercel.app", // main prod frontend
+      "https://todolist-frontend-git-main-yusuf-sodiqs-projects.vercel.app", // preview build
     ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
+// ✅ Handle OPTIONS manually for preflight
+app.options("*", cors());
 
-// ✅ Middleware setup
+// ✅ Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Base route
+// ✅ Test route
 app.get("/", (req, res) => {
   res.send("✅ TodoList Backend running successfully on Vercel!");
 });
@@ -32,5 +35,5 @@ app.get("/", (req, res) => {
 app.use("/", userRouter);
 app.use("/task", taskRouter);
 
-// ❌ No app.listen() — Vercel handles this
+// ❌ No app.listen — Vercel handles it
 module.exports = app;
