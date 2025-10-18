@@ -44,57 +44,76 @@ module.exports.createUser = (req, res) => {
 
 
 
-
-
-
 module.exports.loginUser = (req, res) => {
-   
-    const { email, password } = req.body
-    const errors = validationResult(req)
+  const { email, password } = req.body;
+  const errors = validationResult(req);
 
-    try {
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                message: errors.array()[0].msg
-            })
-        }
-
-        DB.query("SELECT * FROM users WHERE email = ?", [email], (er, result) => {
-            if (er) {
-                
-                return res.status(500).json({ message: "Unable to get user" })
-            }
-
-            if (result.length === 0) {
-                return res.status(404).json({ message: "User not found" })
-            }
-
-            const user = result[0]
-            const db_password = user.pass_word
-
-            const match = bcrypt.compareSync(password, db_password)
-
-            if (match) {
-                const token = jwt.sign(
-                    { id: user.user_id, fullname: user.full_name  },
-                    process.env.JWT_SECRET,
-                    { expiresIn: "1d" }
-                )
-                return res.status(200).json({
-                    message: "Login successful",
-                    token
-                })
-            } else {
-                return res.status(400).json({
-                    message: "Email or password incorrect"
-                })
-            }
-        })
-    } catch (error) {
-        console.error("Unexpected error:", error)
-        return res.status(500).json({ message: error.message || "Something went wrong" })
+  try {
+    // ✅ Validate input
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: errors.array()[0].msg,
+      });
     }
-}
+
+    // ✅ Check database for user
+    DB.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
+      if (err) {
+        console.error("❌ Database error:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const user = result[0];
+      const db_password = user.pass_word;
+
+      if (!db_password) {
+        console.error("❌ Password not found in DB for:", email);
+        return res.status(500).json({ message: "Server password error" });
+      }
+
+      // ✅ Compare passwords
+      const match = bcrypt.compareSync(password, db_password);
+
+      if (!match) {
+        return res.status(400).json({
+          message: "Email or password incorrect",
+        });
+      }
+
+      // ✅ Ensure JWT_SECRET exists
+      const secret = process.env.JWT_SECRET || "fallback_secret";
+
+      // ✅ Create token
+      const token = jwt.sign(
+        { id: user.user_id, fullname: user.full_name },
+        secret,
+        { expiresIn: "1d" }
+      );
+
+      console.log("✅ Login successful for:", email);
+
+      return res.status(200).json({
+        message: "Login successful",
+        token,
+        user: {
+          id: user.user_id,
+          fullname: user.full_name,
+          email: user.email,
+        },
+      });
+    });
+  } catch (error) {
+    console.error("🔥 Unexpected error in loginUser:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
 
 
 
