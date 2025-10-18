@@ -8,11 +8,16 @@ const app = express();
 // ✅ CORS setup — allow only your deployed frontend
 app.use(
   cors({
-    origin: "https://todolist-frontend.vercel.app", // your React frontend URL
+    origin: [
+      "http://localhost:5173", // for local testing
+      "https://todolist-frontend-orcin.vercel.app", // main production frontend
+      "https://todolist-frontend-git-main-yusuf-sodiqs-projects.vercel.app", // preview deploy
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 // ✅ Middleware setup
 app.use(express.json());
