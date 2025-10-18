@@ -59,7 +59,6 @@ module.exports.updateTask = (req, res) => {
         }
 
         if (result.affectedRows === 0) {
-          console.log(first)
           return res.status(404).json({ message: "Task not found or not yours" })
         }
         return res.status(200).json({ message: "Task updated successfully" })

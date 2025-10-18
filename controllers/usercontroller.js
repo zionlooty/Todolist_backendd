@@ -8,8 +8,9 @@ const { validationResult } = require("express-validator")
 
 
 module.exports.createUser = (req, res) => {
-
-    const { full_name, email, password } = req.body
+    // Support both full_name and fullname from client
+    const { fullname, full_name: fullNameAlt, email, password } = req.body
+    const full_name = fullname ?? fullNameAlt
     const errorResponse = validationResult(req)
     try {
         if (!validationResult(req).isEmpty()) {
@@ -75,6 +76,10 @@ module.exports.loginUser = (req, res) => {
             const match = bcrypt.compareSync(password, db_password)
 
             if (match) {
+                if (!process.env.JWT_SECRET) {
+                    console.error("JWT_SECRET is not set")
+                    return res.status(500).json({ message: "Server configuration error" })
+                }
                 const token = jwt.sign(
                     { id: user.user_id, fullname: user.full_name  },
                     process.env.JWT_SECRET,

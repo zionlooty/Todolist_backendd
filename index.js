@@ -9,12 +9,26 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://todolist-frontend-orcin.vercel.app",
-  "https://todolist-frontend-git-main-yusuf-sodiqs-projects.vercel.app"
+  "https://todolist-frontend-git-main-yusuf-sodiqs-projects.vercel.app",
 ];
+const extraOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((s) => s.trim()).filter(Boolean)
+  : [];
+const isAllowedOrigin = (origin) => {
+  if (!origin) return false;
+  if (allowedOrigins.includes(origin) || extraOrigins.includes(origin)) return true;
+  try {
+    const { hostname } = new URL(origin);
+    // Allow any *.vercel.app frontend by default
+    return hostname.endsWith(".vercel.app");
+  } catch (_) {
+    return false;
+  }
+};
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
+  if (isAllowedOrigin(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
