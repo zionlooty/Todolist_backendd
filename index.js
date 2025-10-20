@@ -5,13 +5,13 @@ const taskRouter = require("./routes/taskroutes");
 
 const app = express();
 
-// ✅ Allowed frontend origins
 const allowedOrigins = [
-  "http://localhost:5173", // for local dev
-  "https://todolist-frontend-orcin.vercel.app", // main production frontend
+  "http://localhost:5173", // local dev
+  "https://todohubx.vercel.app", // ✅ your new live frontend
   "https://todolist-frontend-git-main-yusuf-sodiqs-projects.vercel.app", // preview deployment
-  "https://todolist-frontend-d2ud1g2pm-yusuf-sodiqs-projects.vercel.app" // new deployment URL
+  "https://todolist-frontend-d2ud1g2pm-yusuf-sodiqs-projects.vercel.app" // other deployment
 ];
+
 
 // ✅ Custom CORS middleware
 app.use((req, res, next) => {
