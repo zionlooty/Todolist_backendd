@@ -72,15 +72,13 @@ module.exports.updateTask = (req, res) => {
 }
 
 
-
-
-
 module.exports.getTasks = (req, res) => {
   const user_id = req.user.id;
 
   try {
     DB.query(
-      "SELECT * FROM tasks WHERE user_id = ?",
+      // 👇 Added ORDER BY created_at DESC to show latest first
+      "SELECT * FROM tasks WHERE user_id = ? ORDER BY created_at DESC",
       [user_id],
       (er, result) => {
         if (er) {
