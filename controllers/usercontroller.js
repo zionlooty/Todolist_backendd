@@ -59,7 +59,7 @@ module.exports.loginUser = (req, res) => {
     // ✅ Check database for user
     DB.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
       if (err) {
-        console.error("❌ Database error:", err);
+        
         return res.status(500).json({ message: "Database error" });
       }
 
@@ -71,7 +71,7 @@ module.exports.loginUser = (req, res) => {
       const db_password = user.pass_word;
 
       if (!db_password) {
-        console.error("❌ Password not found in DB for:", email);
+        
         return res.status(500).json({ message: "Server password error" });
       }
 
@@ -94,8 +94,7 @@ module.exports.loginUser = (req, res) => {
         { expiresIn: "1d" }
       );
 
-      console.log("✅ Login successful for:", email);
-
+     
       return res.status(200).json({
         message: "Login successful",
         token,
@@ -107,7 +106,7 @@ module.exports.loginUser = (req, res) => {
       });
     });
   } catch (error) {
-    console.error("🔥 Unexpected error in loginUser:", error);
+   
     return res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
